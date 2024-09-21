@@ -10,11 +10,11 @@ app.use('/', require('./routes'));
 
 mongodb.initDb((err) => {
     if (err) {
-        console.log(err);
+        console.log(err); 
     } else {
         app.listen(port, () => {
-            console.log(`Database is listening and node running on localhost:${port}`);
-            console.log(`Add 'users' at the end of URL to see users json data`);
+            console.log(`Server is running and listening on port ${port}`);  
+            console.log(`Add '/users' at the end of the URL to see users JSON data`);
         });
     }
 });
