@@ -27,7 +27,68 @@ const getSingle = async (req, res) => {
     }
 };
 
+const createUser = async (req, res) => {
+    try {
+        const user = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            favoriteColor: req.body.favoriteColor,
+            birthday: req.body.birthday
+        };
+        const response = await mongodb.getDatabase().collection('users').insertOne(user);
+        
+        if (response.acknowledged) {
+            res.status(201).json({
+                message: 'User created successfully',
+                userId: response.insertedId,
+                user: user
+            });
+        } else {
+            res.status(500).json({ message: 'Error creating user' });
+        }
+    } catch (err) {
+        console.error('Error creating user:', err);
+        res.status(500).json({ message: 'Server error while creating user' });
+    }
+};
+
+const updateUser = async (req, res) => {
+    const userId = new ObjectId(req.params.id);
+    const user = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        favoriteColor: req.body.favoriteColor,
+        birthday: req.body.birthday
+    };
+    const response = await mongodb.getDatabase().collection('users').replaceOne({ _id: userId }, user);
+    if (response.modifiedCount > 0) {
+        res.status(204).send();
+    } else {
+        res.status(500).json(response.error || 'Some error occurred while updating the user');
+    }
+};
+
+const deleteUser = async (req, res) => {
+    try {
+        const userId = new ObjectId(req.params.id);
+        const response = await mongodb.getDatabase().collection('users').deleteOne({ _id: userId });
+        if (response.deletedCount > 0) {
+            res.status(204).send();
+        } else {
+            res.status(500).json({ message: 'Failed to delete user or user not found' });
+        }
+    } catch (err) {
+        console.error('Error deleting user:', err);
+        res.status(500).json({ message: 'Server error while deleting user' });
+    }
+};
+ 
 module.exports = {
     getAll,
-    getSingle
+    getSingle,
+    createUser,
+    updateUser,
+    deleteUser
 };
