@@ -3,7 +3,10 @@ const router = express.Router();
 
 const userRoutes = require('./users');
 
+router.use('/', require('./swagger'));
+
 router.get('/', (req, res) => {
+    //#swagger.tags=['Hello World]'
     res.send('Hello World');
 });
 
